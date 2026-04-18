@@ -4,8 +4,12 @@ class Graph:
     def __init__(self, prices, dates):
         self.__prices = prices
         self.__dates = dates
-    
+
+    @classmethod
+    async def create(cls, data):
+        return cls(data["price"], data["date"])
+
     @property
-    def show_graph(self):
-        plt.plot(self.__prices, self.__dates)
-        plt.show()
+    async def show_graph(self):
+        plt.plot(self.__dates, self.__prices)
+        await plt.show()

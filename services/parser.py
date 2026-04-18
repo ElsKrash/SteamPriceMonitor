@@ -21,12 +21,24 @@ class Tracker():
                 data_json = data_json[self._game_id]
                 if data.status == 200:
                     if data_json["success"] and data_json["data"].get("price_overview", False):
+                        self.__game_name = data_json["data"]["name"]
                         self.__price = data_json["data"]["price_overview"]["final_formatted"]
                         self.__date = datetime.datetime.now().replace(microsecond=0)
 
     @property
+    def game_id(self):
+            return self._game_id 
+    
+    @property
+    def game_name(self):
+         return self.__game_name
+
+    @property
     def price(self):
-            return self.__price
+            allowed = "0123456789.,"
+            clean_price = "".join(c for c in self.__price if c in allowed)
+            
+            return clean_price.replace(",", ".").strip()
     
     @property
     def date(self):
