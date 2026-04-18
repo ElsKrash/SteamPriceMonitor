@@ -24,14 +24,14 @@ class DataBaseManager:
         await self.__pool.execute("INSERT INTO price_history (game_id, price, date) VALUES ($1, $2, $3)", game.game_id, game.price, game.date)
 
     async def remove_game(self, game_id):
-        return await self.__pool.execute("DELETE FROM games WHHERE game_id=$1", game_id)
+        return await self.__pool.execute("DELETE FROM games WHERE game_id=$1", game_id)
 
     async def update(self, game: GameModel):
         await self.__pool.execute("UPDATE games SET date = $1 WHERE game_id = $2",  game.date, game.game_id)
         await self.__pool.execute("INSERT INTO price_history (game_id, price, date) VALUES ($1, $2, $3)", game.game_id, game.price, game.date)
 
     async def select(self, game: GameModel):
-        result_raw = await self.__pool.fetch("SELECT price, date FROM price_history WHERE game_id=$1 ORDER BY date DESC LIMIT 60", game.game_id)
+        result_raw = await self.__pool.fetch("SELECT price, date FROM price_history WHERE game_id=$1 ORDER BY date DESC LIMIT 6", game.game_id)
         result = [dict(i) for i in result_raw]
 
         data = {"price": [], "date": []}

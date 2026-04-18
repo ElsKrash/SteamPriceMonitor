@@ -20,6 +20,7 @@ async def start():
     
     game_data = GameModel(int(game.game_id), game.game_name, float(game.price), game.date)
 
+
     data = await database.select(game_data)
 
     graph = await Graph.create(data)

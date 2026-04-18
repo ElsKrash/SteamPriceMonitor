@@ -10,6 +10,19 @@ class Graph:
         return cls(data["price"], data["date"])
 
     @property
-    async def show_graph(self):
-        plt.plot(self.__dates, self.__prices)
-        await plt.show()
+    def save_graph(self):
+
+        fig, ax = plt.subplots()
+        
+        ax.bar(self.__dates, self.__prices, width=0.15, color="#ffffff")
+
+        ax.set_facecolor("#1c1d22")
+        fig.set_facecolor("#1c1d22")
+
+        ax.tick_params(colors="#ffffff")
+        ax.xaxis.label.set_color("#ffffff")
+        ax.yaxis.label.set_color("#ffffff")
+
+        fig.autofmt_xdate()
+
+        plt.savefig(fname="graph.jpg", format="jpg", dpi=1000)
