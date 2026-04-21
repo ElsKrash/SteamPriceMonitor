@@ -5,5 +5,4 @@ from datetime import datetime
 class GameModel:
     game_id: int
     name: str 
-    price: float
     date: datetime

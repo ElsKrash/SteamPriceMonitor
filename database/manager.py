@@ -41,4 +41,8 @@ class DataBaseManager:
             data["date"].append(item["date"])
 
         return data
-
+    
+    async def get_all_games(self):
+        result_raw = await self.__pool.fetch("SELECT * FROM games")
+        result = [dict(i) for i in result_raw]
+        return result

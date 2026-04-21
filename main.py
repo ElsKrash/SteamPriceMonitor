@@ -10,20 +10,20 @@ from services.graphs import Graph
 
 load_dotenv()
 
-user = getenv("user")
-password = getenv("password")
+user = getenv("USER")
+password = getenv("PASSWORD")
 
 async def start():
     database = await DataBaseManager.create(user, password)
 
-    game = await Tracker.create(105600)
-    
-    game_data = GameModel(int(game.game_id), game.game_name, float(game.price), game.date)
+    games_raw = await database.get_all_games()
+    games = []
 
+    for game_raw in games_raw:
+        game = GameModel(**game_raw)
+        games.append(game)
 
-    data = await database.select(game_data)
+    print(games)
 
-    graph = await Graph.create(data)
-    graph.save_graph
 
 asyncio.run(start())
