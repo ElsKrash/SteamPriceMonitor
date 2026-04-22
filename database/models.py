@@ -6,3 +6,10 @@ class GameModel:
     game_id: int
     name: str 
     date: datetime
+
+@dataclass
+class NewGameModel:
+    game_id: int
+    name: str 
+    price: float
+    date: datetime

@@ -1,6 +1,6 @@
 import asyncpg
 
-from database.models import GameModel
+from database.models import GameModel, NewGameModel
 
 class DataBaseManager:
     def __init__(self, pool):
@@ -19,7 +19,7 @@ class DataBaseManager:
     async def close(self):
         self.__pool.close()
 
-    async def add_game(self, game: GameModel):
+    async def add_game(self, game: NewGameModel):
         await self.__pool.execute("INSERT INTO games (game_id, name, date) VALUES ($1, $2, $3)", game.game_id, game.name, game.date)
         await self.__pool.execute("INSERT INTO price_history (game_id, price, date) VALUES ($1, $2, $3)", game.game_id, game.price, game.date)
 

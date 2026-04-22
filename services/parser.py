@@ -26,22 +26,22 @@ class Tracker():
                         self.__date = datetime.datetime.now().replace(microsecond=0)
 
     @property
-    def game_id(self):
-            return self._game_id 
+    def game_id(self) -> int:
+            return int(self._game_id)
     
     @property
-    def game_name(self):
+    def game_name(self) -> str:
          return self.__game_name
 
     @property
-    def price(self):
+    def price(self) -> float:
             allowed = "0123456789.,"
             clean_price = "".join(c for c in self.__price if c in allowed)
             
             return clean_price.replace(",", ".").strip()
     
     @property
-    def date(self):
+    def date(self) -> datetime.datetime:
             return self.__date
 
 if __name__ == "__main__":
