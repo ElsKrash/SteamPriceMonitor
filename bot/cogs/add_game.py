@@ -3,8 +3,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from services.parser import Tracker
-from database.models import NewGameModel
-
+from database.models import GameModel
+from asyncpg import UniqueViolationError
 
 class AddGame(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,13 +15,14 @@ class AddGame(commands.Cog):
     async def add_game(self, ctx: commands.Context, game_id):
         await ctx.defer()
         game = await Tracker.create(game_id)
-        text = discord.Embed(title=f"Игра {game.game_name} успешно добавлена!", description=f"Ценна на данный момент: {game.price}", color=discord.Colour.from_rgb(155, 33, 255))
-        game_model = NewGameModel(game.game_id, game.game_name, game.price, game.date)
+        game_model = GameModel(game.game_id, game.game_name, game.date, game.price)
         try:
+            text = discord.Embed(title=f"Game {game.game_name} succesful added!", description=f"Price for now: {game.price}", color=discord.Colour.from_rgb(155, 33, 255))
             await self.bot.database.add_game(game_model)
-        except Exception as e:
-            print(e)
-        await ctx.send(embed=text)
+            await ctx.send(embed=text)
+        except UniqueViolationError:
+            text = discord.Embed(title=f"Game {game.game_name} is already in database!", description=f"For check price use /graph!", color=discord.Colour.from_rgb(252, 3, 3))
+            await ctx.send(embed=text)
 
 
 async def setup_add_game(bot: commands.Bot):

@@ -1,6 +1,6 @@
 import asyncpg
 
-from database.models import GameModel, NewGameModel
+from database.models import GameModel, PricePoint
 
 class DataBaseManager:
     def __init__(self, pool):
@@ -19,28 +19,21 @@ class DataBaseManager:
     async def close(self):
         self.__pool.close()
 
-    async def add_game(self, game: NewGameModel):
+    async def add_game(self, game: GameModel):
         await self.__pool.execute("INSERT INTO games (game_id, name, date) VALUES ($1, $2, $3)", game.game_id, game.name, game.date)
         await self.__pool.execute("INSERT INTO price_history (game_id, price, date) VALUES ($1, $2, $3)", game.game_id, game.price, game.date)
 
-    async def remove_game(self, game_id):
-        return await self.__pool.execute("DELETE FROM games WHERE game_id=$1", game_id)
+    async def remove_game(self, game_id: int):
+        await self.__pool.execute("DELETE FROM games WHERE game_id=$1", game_id)
 
     async def update(self, game: GameModel):
         await self.__pool.execute("UPDATE games SET date = $1 WHERE game_id = $2",  game.date, game.game_id)
         await self.__pool.execute("INSERT INTO price_history (game_id, price, date) VALUES ($1, $2, $3)", game.game_id, game.price, game.date)
 
-    async def select(self, game: GameModel):
-        result_raw = await self.__pool.fetch("SELECT price, date FROM price_history WHERE game_id=$1 ORDER BY date DESC LIMIT 6", game.game_id)
-        result = [dict(i) for i in result_raw]
+    async def select(self, game_id: int, time: int) -> list[PricePoint]:
+        result = await self.__pool.fetch("SELECT price, date FROM price_history WHERE game_id=$1 ORDER BY date DESC LIMIT $2", game_id, time)
 
-        data = {"price": [], "date": []}
-        
-        for item in result:
-            data["price"].append(item["price"])
-            data["date"].append(item["date"])
-
-        return data
+        return [PricePoint(price=item["price"], date=item["date"]) for item in result]
     
     async def get_all_games(self):
         result_raw = await self.__pool.fetch("SELECT * FROM games")

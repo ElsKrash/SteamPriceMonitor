@@ -38,7 +38,7 @@ class Tracker():
             allowed = "0123456789.,"
             clean_price = "".join(c for c in self.__price if c in allowed)
             
-            return clean_price.replace(",", ".").strip()
+            return float(clean_price.replace(",", ".").strip())
     
     @property
     def date(self) -> datetime.datetime:
